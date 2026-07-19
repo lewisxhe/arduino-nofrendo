@@ -405,7 +405,7 @@ int vid_setmode(int width, int height)
       bmp_destroy(&back_buffer);
 #endif /* NOFRENDO_DOUBLE_FRAMEBUFFER */
 
-   primary_buffer = bmp_create(width, height, 0); /* no overdraw */
+   primary_buffer = bmp_create(width, height, 8);
    if (NULL == primary_buffer)
       return -1;
 
@@ -430,6 +430,8 @@ int vid_setmode(int width, int height)
 
 static int vid_findmode(int width, int height, viddriver_t *osd_driver)
 {
+   int screen_width, screen_height;
+
    if (osd_driver->init(width, height))
    {
       driver = NULL;
@@ -441,6 +443,8 @@ static int vid_findmode(int width, int height, viddriver_t *osd_driver)
 
    /* re-assert dimensions, clear the surface */
    screen = driver->lock_write();
+   screen_width = screen->width;
+   screen_height = screen->height;
 
    /* use custom pageclear, if necessary */
    if (driver->clear)
@@ -451,9 +455,10 @@ static int vid_findmode(int width, int height, viddriver_t *osd_driver)
    /* release surface */
    if (driver->free_write)
       driver->free_write(-1, NULL);
+   screen = NULL;
 
    nofrendo_log_printf("video driver: %s at %dx%d\n", driver->name,
-                       screen->width, screen->height);
+                       screen_width, screen_height);
 
    return 0;
 }
@@ -473,9 +478,6 @@ int vid_init(int width, int height, viddriver_t *osd_driver)
 
 void vid_shutdown(void)
 {
-   if (NULL == driver)
-      return;
-
    if (NULL != primary_buffer)
       bmp_destroy(&primary_buffer);
 
@@ -486,6 +488,9 @@ void vid_shutdown(void)
 
    if (driver && driver->shutdown)
       driver->shutdown();
+
+   driver = NULL;
+   screen = NULL;
 }
 
 /*

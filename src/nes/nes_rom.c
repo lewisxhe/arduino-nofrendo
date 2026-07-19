@@ -159,8 +159,7 @@ static int rom_loadrom(FILE *fp, rominfo_t *rominfo)
    ASSERT(rominfo);
 
    /* Allocate ROM space, and load it up! */
-   // rominfo->rom = malloc(rominfo->rom_banks * ROM_BANK_LENGTH);
-   rominfo->rom = mem_alloc(rominfo->rom_banks * ROM_BANK_LENGTH, false);
+   rominfo->rom = NOFRENDO_MALLOC(rominfo->rom_banks * ROM_BANK_LENGTH);
    if (NULL == rominfo->rom)
    {
       gui_sendmsg(GUI_RED, "Could not allocate space for ROM image");
@@ -171,8 +170,7 @@ static int rom_loadrom(FILE *fp, rominfo_t *rominfo)
    /* If there's VROM, allocate and stuff it in */
    if (rominfo->vrom_banks)
    {
-      // rominfo->vrom = malloc((rominfo->vrom_banks * VROM_BANK_LENGTH));
-      rominfo->vrom = mem_alloc(rominfo->vrom_banks * VROM_BANK_LENGTH, false);
+      rominfo->vrom = NOFRENDO_MALLOC(rominfo->vrom_banks * VROM_BANK_LENGTH);
       if (NULL == rominfo->vrom)
       {
          gui_sendmsg(GUI_RED, "Could not allocate space for VROM");

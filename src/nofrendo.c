@@ -121,6 +121,32 @@ void main_quit(void)
    console.nexttype = system_unknown;
 }
 
+/* Request quit from inside the emulator frame loop.
+** main_quit() destroys the current machine immediately; doing that from
+** osd_getinput() leaves NES/ROM/video code on the stack with freed state.
+*/
+void main_soft_quit(void)
+{
+   console.quit = true;
+
+   switch (console.type)
+   {
+   case system_nes:
+      nes_poweroff();
+      break;
+
+   default:
+      break;
+   }
+
+   if (NULL != console.nextfilename)
+   {
+      NOFRENDO_FREE(console.nextfilename);
+      console.nextfilename = NULL;
+   }
+   console.nexttype = system_unknown;
+}
+
 /* brute force system autodetection */
 static system_t detect_systemtype(const char *filename)
 {
