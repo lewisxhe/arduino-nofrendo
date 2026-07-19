@@ -397,12 +397,14 @@ void nes_emulate(void)
       {
          frames_to_render--;
          nes_renderframe(false);
+         osd_audio_frame();
          system_video(false);
       }
       else if ((1 == frames_to_render && true == nes.autoframeskip) || false == nes.autoframeskip)
       {
          frames_to_render = 0;
          nes_renderframe(true);
+         osd_audio_frame();
          system_video(true);
       }
    }

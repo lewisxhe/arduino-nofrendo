@@ -57,6 +57,7 @@ extern void *mem_alloc(int size, bool prefer_fast_memory);
 
 /* audio */
 extern void osd_setsound(void (*playfunc)(void *buffer, int size));
+extern void osd_audio_frame(void);
 
 #ifndef NSF_PLAYER
 #include "noftypes.h"
